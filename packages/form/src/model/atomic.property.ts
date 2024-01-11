@@ -25,6 +25,9 @@ export abstract class AtomicProperty extends FormProperty {
   }
 
   _hasValue(): boolean {
+    if (this.schema.nullable && this.value === null) {
+      return true;
+    }
     return this.fallbackValue() !== this.value;
   }
 

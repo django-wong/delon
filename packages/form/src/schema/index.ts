@@ -170,6 +170,11 @@ export interface SFSchema {
    */
   required?: string[];
   /**
+   * 属性值是否允许为 `null`
+   * @see https://ajv.js.org/json-schema.html#nullable
+   */
+  nullable?: boolean;
+  /**
    * 定义属性
    */
   properties?: { [key: string]: SFSchema };

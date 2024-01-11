@@ -137,15 +137,24 @@ export abstract class FormProperty {
       emitValueEvent: true,
       updatePath: '',
       updateValue: null,
+      initialUpdate: true,
       ...options
     };
     this._updateValue();
 
     if (options.emitValueEvent) {
-      options.updatePath = options.updatePath || this.path;
-      options.updateValue = options.updateValue == null ? this.value : options.updateValue;
-      this.valueChanges.next({ value: this.value, path: options.updatePath, pathValue: options.updateValue });
+      if (options.initialUpdate) {
+        options.updatePath = this.path;
+        options.updateValue = this.value;
+      }
+      this.valueChanges.next({
+        value: this.value,
+        path: options.updatePath ?? null,
+        pathValue: options.updateValue
+      });
     }
+
+    options.initialUpdate = false;
 
     // `emitValidator` 每一次数据变更已经包含完整错误链路，后续父节点数据变更无须再触发校验
     if (options.emitValidator && this.ui.liveValidate === true) {
@@ -204,12 +213,9 @@ export abstract class FormProperty {
     let errors: ErrorData[];
     // The definition of some rules:
     // 1. Should not ajv validator when is empty data and required fields
-    // 2. Should not ajv validator when is empty data
     const isEmpty = this.isEmptyData(this._value);
     if (isEmpty && this.ui._required) {
       errors = [{ keyword: 'required' }];
-    } else if (isEmpty) {
-      errors = [];
     } else {
       errors = this.schemaValidator(this._value) || [];
     }

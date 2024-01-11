@@ -51,6 +51,10 @@ export interface SFUpdateValueAndValidity {
    * 当前更新路径对应值
    */
   updateValue?: SFValue | null;
+  /**
+   * 是否由子级触发
+   */
+  initialUpdate?: boolean;
 }
 
 export interface SFButton {
